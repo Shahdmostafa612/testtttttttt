@@ -1,0 +1,41 @@
+name: Test operation
+
+on:
+  push:
+    branches: [ "MASTER" ]
+  pull_request:
+    branches: [ "MASTER" ]
+    
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2  # Check out the repository code
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Set your preferred Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -r requirements.txt || echo "No requirements to install"  # Skip if no requirements.txt
+
+      - name: Run tests
+        run: |
+          python -m unittest test
+
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    #if: ${{ always() }}  # Always run the deployment job, even if tests fail
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying the application..."  # Replace this with actual deployment commands
